@@ -4,27 +4,50 @@ sqoop to hive
 https://www.cnblogs.com/xuyou551/p/7998846.html
 
 Sqoop常用命令
-sqoop import
-`bin/sqoop import \
 
---connect jdbc:mysql://172.16.71.27:3306/babasport \
+## sqoop --option-file
 
---username root \
-
---password root \
-
---query 'select id, brand_id,name from bbs_product where $CONDITIONS LIMIT 100' \
-
---target-dir /user/xuyou/sqoop/imp_bbs_product_sannpy_ \
-
---delete-target-dir \
-
---num-mappers 1 \
-
---compress \
-
---compression-codec org.apache.hadoop.io.compress.SnappyCodec \
-
---fields-terminated-by '\t'`
-
+#import to HDFS
+import
+--connect 
+jdbc:mysql://172.16.71.27:3306/babasport 
+--username 
+root
+--password 
+root
+--query 
+'select id, brand_id,name from bbs_product where $CONDITIONS LIMIT 100'
+--target-dir 
+/user/xuyou/sqoop/imp_bbs_product_sannpy_
+--delete-target-dir
+--num-mappers
+1
+--compress
+--compression-codec 
+org.apache.hadoop.io.compress.SnappyCodec
+--fields-terminated-by 
+'\t'`
+--where "columnname='XXXX'"
 1.如果num-mappers大于1，怎么需要设定分区
+2.
+在以上需要按照自定义SQL语句导出数据到HDFS的情况下：
+2.1、引号问题，要么外层使用单引号，内层使用双引号，$CONDITIONS的$符号不用转义， 要么外层使用双引号，那么内层使用单引号，然后$CONDITIONS的$符号需要转义
+2.2、自定义的SQL语句中必须带有WHERE \$CONDITIONS
+
+#Import to hive
+sqoop import  \
+--connect jdbc:mysql://hadoop1:3306/mysql  \
+--username root  \
+--password root  \
+--table help_keyword  \
+--fields-terminated-by "\t"  \
+--lines-terminated-by "\n"  \
+--hive-import  \
+--hive-overwrite  \
+--create-hive-table  \
+--delete-target-dir \
+--hive-database  mydb_test \
+--hive-table new_help_keyword
+--incremental  append  \
+--check-column  help_keyword_id \
+--last-value 500  \
