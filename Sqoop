@@ -1,0 +1,30 @@
+Sqoop
+https://www.cnblogs.com/qingyunzong/p/8807252.html
+sqoop to hive
+https://www.cnblogs.com/xuyou551/p/7998846.html
+
+Sqoop常用命令
+sqoop import
+`bin/sqoop import \
+
+--connect jdbc:mysql://172.16.71.27:3306/babasport \
+
+--username root \
+
+--password root \
+
+--query 'select id, brand_id,name from bbs_product where $CONDITIONS LIMIT 100' \
+
+--target-dir /user/xuyou/sqoop/imp_bbs_product_sannpy_ \
+
+--delete-target-dir \
+
+--num-mappers 1 \
+
+--compress \
+
+--compression-codec org.apache.hadoop.io.compress.SnappyCodec \
+
+--fields-terminated-by '\t'`
+
+1.如果num-mappers大于1，怎么需要设定分区
