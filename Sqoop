@@ -8,7 +8,7 @@ https://www.cnblogs.com/xuyou551/p/7998846.html
 
 Sqoop常用命令
 
-## sqoop --option-file
+## sqoop --options-file  ./sqoop_test1.txt
 
 #import to HDFS
 import
@@ -54,3 +54,10 @@ sqoop import  \
 --incremental  append  \
 --check-column  help_keyword_id \
 --last-value 500  \
+
+并行机制：
+通过这只--num-mappers来设置并行导入的mapreduce的数量，如果不设置默认是4个。 
+一但设置了并行导入，那么就需要告诉sqoop（底层的mapreduce）用什么来切片，如果输入的表，那一般使用表的主键切片。所以还需要添加 --split by，否则会报错。
+对于输入端是数据库的，mappper task的数量必须手动设置，特别是表比较大的时候，否则使用默认的4个map，会造成单个map负责过大，导入效率低的问题。
+那多少个mapper task合适？ 一般用表大小/块大小，就等于maptask的数量。 比如5000M/128M。
+
